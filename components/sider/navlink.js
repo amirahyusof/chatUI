@@ -12,48 +12,48 @@ import {
 
 export const navLinks = [
   {
-    href: "",
+    href: "/",
     label: 'Main',
     Icon: House
   },
   {
-    href: "",
-    label: 'All Book',
+    href: "/pages/connection",
+    label: 'connection',
     Icon: Building2
   },
   {
-    href: "",
-    label: 'Categories',
+    href: "/pages/time",
+    label: 'Time',
     Icon: Hourglass
   },
   {
-    href: "",
-    label: 'Add Book',
+    href: "/pages/chat",
+    label: 'chat',
     Icon: Mail
   },
   {
-    href: "",
-    label: 'Main',
+    href: "/pages/receipt",
+    label: 'Receipt',
     Icon: ReceiptText
   },
   {
-    href: "",
-    label: 'All Book',
+    href: "/pages/calender",
+    label: 'Calender',
     Icon: CalendarDays
   },
   {
-    href: "",
-    label: 'Categories',
+    href: "/pages/messages",
+    label: 'messages',
     Icon: MessageCircle
   },
   {
-    href: "",
-    label: 'Add Book',
+    href: "/pages/settings",
+    label: 'setting',
     Icon: Settings
   },
   {
-    href: "",
-    label: 'Add Book',
+    href: "/pages/user",
+    label: 'user',
     Icon: UserRound
   }
 ]
