@@ -1,22 +1,71 @@
+"use client"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
 
-export default async function Groups(){
-  const dataGroup = await fetch ("http://18.143.79.95/api/chatSystem/groups/list");
-  const groupList = await dataGroup.json();
-  console.log(groupList);
+export default function Groups(){
+  const [groupWithUsers, setGroupWithUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const dataUser = await fetch("http://18.143.79.95/api/chatSystem/users/list");
-  const userList = await dataUser.json();
+  useEffect(() => {
+    const fetchGroupAndUsers = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-  const groupWithUsers = groupList.map((group) => {
-    const groupUsers = group.users.map((userId) => 
-      userList.find((user) => user.id === userId)
+        const groupResponse = await fetch ("http://18.143.79.95/api/chatSystem/groups/list");
+        const groupList = await groupResponse.json()
+      
+        if(!groupResponse.ok){
+          throw new Error('Failed to fetch data of groups')
+        }
+
+        const dataUser = await fetch("http://18.143.79.95/api/chatSystem/users/list");
+        const userList = await dataUser.json();
+        
+        if(!dataUser.ok){
+          throw new Error('Failed to fetch data of groups')
+        }
+
+        const processGroups = groupList.map((group) => {
+          const groupUsers = group.users.map((userId) => 
+            userList.find((user) => user.id === userId)
+          );
+          return {...group, groupUsers};
+        });
+
+        setGroupWithUsers(processGroups);
+        setIsLoading(false);
+
+      } catch(err){
+        console.error('Error fetching group and users:', err)
+        setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+        setIsLoading(false);
+
+      }
+    };
+    fetchGroupAndUsers();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className='p-6 text-center'>
+        Loading ...
+      </div>
     );
-    return {...group, groupUsers};
-  });
+  }
+
+
+  if (error) {
+    return (
+      <div className='p-6 text-red-500'>
+        <h1>Error Loading Groups</h1>
+        <p>{error}</p>
+      </div>
+    );
+  }
   
 
   return (
@@ -57,13 +106,9 @@ export default async function Groups(){
                   </div>
                 )}
               </div>
-              
-
             </li>
-
           ))}
         </ul>
-
       </div>
     </section>
   )
