@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { navLinks } from "./navlink"
 import { usePathname } from "next/navigation"
+
  
 
 export default function Sidebar(){
@@ -10,6 +11,8 @@ export default function Sidebar(){
 
   return (
     <div className="mt-4 h-max bg-[#7868E6] rounded-r-3xl md:border-r hidden md:flex flex-col color-white">
+
+      
       <div className="flex-1 overflow-hidden">
         <nav className="grid items-center px-2">
           {navLinks.map(({href, Icon}) => {
@@ -29,8 +32,8 @@ export default function Sidebar(){
           })}
         </nav>
       </div>
-
     </div>
   )
 }
+
 

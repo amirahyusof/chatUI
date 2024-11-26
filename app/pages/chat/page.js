@@ -9,18 +9,18 @@ export default function ChatPage(){
   return (
     <section>
       <Header />
-      <div className='grid grid-cols-1 lg:grid-rows-2 grid-flow-col gap-8 p-4'>
-        <div className="row-span-3 space-y-6">
-          <Card>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 p-4'>
+        <div className="md:space-y-6 md:flex md:flex-row md:justify-between md:gap-6">
+          <Card className="md:w-full">
             <ChatUserList />
           </Card>
         
-          <Card>
+          <Card className="md:w-full">
             <Groups />
           </Card>
         </div>
 
-        <div className='row-span-2 lg:col-span-2 overflow-y-hidden'> 
+        <div className='lg:col-span-2'> 
           <Card>
             <ChatList />
           </Card>
