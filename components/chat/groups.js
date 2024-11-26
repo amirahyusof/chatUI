@@ -17,6 +17,7 @@ export default function Groups(){
 
         const groupResponse = await fetch ("http://18.143.79.95/api/chatSystem/groups/list");
         const groupList = await groupResponse.json()
+        console.log(groupList)
       
         if(!groupResponse.ok){
           throw new Error('Failed to fetch data of groups')

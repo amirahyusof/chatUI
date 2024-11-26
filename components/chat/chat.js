@@ -7,15 +7,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { 
   ImageIcon, 
   Paperclip, 
+  PhoneCallIcon, 
   Search, 
   Send, 
-  Smile 
+  Smile, 
+  Video, 
+  EllipsisVertical, 
+  MapPin
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 
 export default function ChatList(){
   const [chatUser, setChatWithUser] = useState([]);
   const [userList, setUserList] = useState([]);
+  const [userDetails, setUserDetails] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState("");
@@ -68,15 +74,15 @@ export default function ChatList(){
 
 
   //fetch user details
-  // const fetchUserDetails = async (userId) => {
-  //   try{
-  //     const response = await fetch(`http://18.143.79.95/api/chatSystem/user/${userId}`);
-  //     const data = await response.json()
-  //     setUserDetails(data);
-  //   } catch(error){
-  //     console.error("Error fetching user details:", error)
-  //   }
-  // };
+  const fetchUserDetails = async (userId) => {
+    try{
+      const response = await fetch(`http://18.143.79.95/api/chatSystem/user/${userId}`);
+      const data = await response.json()
+      setUserDetails(data);
+    } catch(error){
+      console.error("Error fetching user details:", error)
+    }
+  };
     
   //fetch chats by userID
   const fetchChatMessages = async(userId) => {
@@ -94,8 +100,6 @@ export default function ChatList(){
   }
        
   const sendMessage = async() => {
-    if(!message.trim() || !selectedUser) return;
-
     try{
       const response = await fetch('http://18.143.79.95/api/chatSystem/chat/add', {
         method: "POST", 
@@ -109,10 +113,16 @@ export default function ChatList(){
         })
       });
 
-      if(response.ok){
-        setMessage(''),
-        fetchChatMessages(selectedUser.id);
+
+      const data = await response.json();
+      console.log(data)
+
+      if(!response.ok){
+        throw new Error (`HTTP error ${response.status}`)
       }
+
+      setMessage(''),
+      fetchChatMessages(selectedUser.id);
     } catch(error){
       console.error("Error sending message:", error)
     }
@@ -124,7 +134,7 @@ export default function ChatList(){
 
   return (
     <div className="flex w-full">
-      <div className="rfixed w-1/3">
+      <div className="relative w-1/3">
         <div className="p-4">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -172,33 +182,115 @@ export default function ChatList(){
 
 
       {/*Right Panel */}
-      <div className="flex-1 flex flex-col">
+      <div className="relative flex-1 flex flex-col w-2/3 overflow-y-auto">
         {selectedUser ? (
           <>
             {/* Chat Header */}
-            <div className="p-4 border-b flex items-center">
-              <Avatar className="h-10 w-10 mr-3">
-                {selectedUser.profileImage ? (
-                  <AvatarImage
-                    src={selectedUser.profileImage}
-                    alt={selectedUser.username}
-                  />
-                ) : (
-                  <AvatarFallback>{selectedUser.username.charAt(0)}</AvatarFallback>
-                )}
-              </Avatar>
-              <h2 className="text-lg font-semibold">{selectedUser.username}</h2>
+            <div className="p-4 border-b flex items-center justify-between">
+              <div className="flex items-center">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Avatar className="h-10 w-10 mr-3">
+                    {selectedUser.profileImage ? (
+                      <div>
+                        <AvatarImage
+                          src={selectedUser.profileImage}
+                          alt={selectedUser.username}
+                          onClick={()=> {
+                            fetchUserDetails(selectedUser.id);
+                          }}
+                        />
+                      </div>
+                      
+                    ) : (
+                      <AvatarFallback>{selectedUser.username.charAt(0)}</AvatarFallback>
+                    )}
+                    </Avatar>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-96 p-6 bg-white shadow-lg rounded-lg">
+                    {/* Header */}
+                    <div className="flex flex-col items-center text-center">
+                      <Avatar className="h-24 w-24 mb-4">
+                        <AvatarImage src={selectedUser.profileImage} alt={selectedUser.username} />
+                      </Avatar>
+                      <h2 className="text-lg font-semibold">{selectedUser.username}</h2>
+                      <p className="text-gray-500">{selectedUser.position}</p>
+                      <div className="flex items-center space-x-2 mt-2">
+                        <MapPin className="h-4 w-4 text-gray-500" />
+                        <p className="text-sm text-gray-500">{selectedUser.location}</p>
+                      </div>
+                      <div className="flex items-center space-x-4 mt-4">
+                        <Button variant="outline" size="icon">
+                          <PhoneCallIcon className="h-5 w-5" />
+                        </Button>
+                        <Button variant="outline" size="icon">
+                          <Video className="h-5 w-5" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* User Information Section */}
+                    <div className="mt-6 space-y-4">
+                      <h3 className="text-md font-semibold">User Information</h3>
+                      <p>
+                        <strong>Phone:</strong> {selectedUser.phone}
+                      </p>
+                      <p>
+                        <strong>Email:</strong> {selectedUser.email}
+                      </p>
+                    </div>
+
+                    {/* Group Participants */}
+                    <div className="mt-6">
+                      <h3 className="text-md font-semibold">Group Participants</h3>
+                      <div className="flex items-center space-x-2 mt-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback>M</AvatarFallback>
+                        </Avatar>
+                        <p className="text-sm">{selectedUser.group}</p>
+                      </div>
+                    </div>
+
+                    {/* Media Section */}
+                    {/* <div className="mt-6">
+                      <h3 className="text-md font-semibold">Media</h3>
+                      <div className="flex space-x-2 mt-2">
+                        {selectedUser.media.map((item, index) => (
+                          <img
+                            key={index}
+                            src={item}
+                            alt={`media-${index}`}
+                            className="h-16 w-16 rounded-md object-cover"
+                          />
+                        ))}
+                      </div>
+                    </div> */}
+                  </PopoverContent>
+                </Popover>
+                
+                <div>
+                  <h2 className="text-lg font-semibold">{selectedUser.username}</h2>
+                  <p>{selectedUser.position}</p>
+                </div>
+              </div>
+             
+
+                <div className="flex items-center space-x-2">
+                  <PhoneCallIcon className="h-6 w-6 border-2 p-1 cursor-pointer rounded-full" />
+                  <Video className="h-6 w-6 border-2 rounded-full p-1 cursor-pointer" />
+                  <EllipsisVertical className="h-6 w-6 border-2 rounded-full p-1 cursor-pointer" />
+                </div>
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 h-[36%] bg-gray-100">
               {chatMessages.map((msg) => (
                 <div
                   key={msg.id}
                   className={`flex ${msg.fromUser === currentUserId ? 'justify-end' : 'justify-start'}`}
                 >
                   <div 
-                    className={`p-3 rounded-lg max-w-[70%] ${
+                    className={`p-3 rounded-lg max-w-[50%] ${
                       msg.fromUser === currentUserId 
                         ? 'bg-blue-500 text-white' 
                         : 'bg-gray-200 text-black'

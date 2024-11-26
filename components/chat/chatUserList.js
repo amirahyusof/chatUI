@@ -30,7 +30,7 @@ export default function ChatUserList() {
 
         const processedUsers = data.map(user => ({
           ...user,
-          id: user.id || Math.random().toString(),
+          id: user.id || user.username || "Unknown-user",
           username: user.username || 'Unknown User',
           profileImage: user.profileImage || '/default-avatar.png' 
         }));
@@ -77,7 +77,7 @@ export default function ChatUserList() {
         )}
 
         <ul className="space-y-2">
-          {filterUser.map((user) => (
+          {filterUser.slice(0,4).map((user) => (
             <li key={user.id} className="bg-white rounded-lg p-2 hover:bg-gray-50">
               <div className="flex items-center space-x-4 py-2">
                 <div className="relative w-12 h-12">

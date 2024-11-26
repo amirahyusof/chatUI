@@ -9,7 +9,7 @@ export default function ChatPage(){
   return (
     <section>
       <Header />
-      <div className='grid grid-rows-2 grid-flow-col gap-8 p-4'>
+      <div className='grid grid-cols-1 lg:grid-rows-2 grid-flow-col gap-8 p-4'>
         <div className="row-span-3 space-y-6">
           <Card>
             <ChatUserList />
@@ -20,7 +20,7 @@ export default function ChatPage(){
           </Card>
         </div>
 
-        <div className='row-span-2 col-span-2'> 
+        <div className='row-span-2 lg:col-span-2 overflow-y-hidden'> 
           <Card>
             <ChatList />
           </Card>
